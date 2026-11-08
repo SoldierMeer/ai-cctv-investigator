@@ -1,0 +1,13 @@
+{
+  "name": "@ai-cctv/shared-contracts",
+  "version": "0.1.0",
+  "description": "Shared TypeScript contracts and constants for AI CCTV Investigator",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
