@@ -1,0 +1,24 @@
+# Python & PyTorch
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.pt
+*.pth
+*.onnx
+# Datasets, Raw Videos & FAISS Binary Indexes (Do not commit large binaries)
+data/raw_videos/*.mp4
+data/raw_videos/*.avi
+data/tracklets/crops/
+data/benchmarks/*
+data/faiss_store/*.index
+# Node & Next.js
+node_modules/
+.next/
+dist/
+*.log
+# Environment & OS
+.env
+.env.local
+.DS_Store
