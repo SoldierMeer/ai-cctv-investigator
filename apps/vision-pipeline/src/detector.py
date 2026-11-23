@@ -80,3 +80,33 @@ class PersonDetector:
         person_mask = data[:, 5] == 0.0
         filtered = data[person_mask][:, :6]
         return np.asarray(filtered, dtype=np.float32)
+
+
+class SyntheticBoxDetector:
+    """Lightweight threshold-based detector for offline dry-runs and synthetic video tests."""
+
+    def __init__(self, min_area: int = 400, threshold: int = 35) -> None:
+        self.min_area = int(min_area)
+        self.threshold = int(threshold)
+
+    def detect(self, frame: np.ndarray) -> np.ndarray:
+        """Detect bright synthetic pedestrian bounding boxes in `(N, 6)` format."""
+        import cv2
+
+        if frame is None or not isinstance(frame, np.ndarray) or frame.size == 0 or len(frame.shape) < 2:
+            return np.empty((0, 6), dtype=np.float32)
+
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) if len(frame.shape) == 3 else frame
+        _, mask = cv2.threshold(gray, self.threshold, 255, cv2.THRESH_BINARY)
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        boxes = []
+        for cnt in contours:
+            x, y, w, h = cv2.boundingRect(cnt)
+            if w * h >= self.min_area:
+                boxes.append([float(x), float(y), float(x + w), float(y + h), 0.95, 0.0])
+
+        if not boxes:
+            return np.empty((0, 6), dtype=np.float32)
+        return np.asarray(boxes, dtype=np.float32)
+
