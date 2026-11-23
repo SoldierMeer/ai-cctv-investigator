@@ -359,11 +359,12 @@ def test_embed_extractor_and_mock_training(
     assert reloaded_vec.shape == (1, EMBED_DIM)
     assert np.isclose(np.linalg.norm(reloaded_vec), 1.0, atol=1e-5)
 
-    # Verify build_model_and_head builds frozen-early backbone + stripe head
+    # Verify build_model_and_head builds frozen-early backbone + stripe head without duplicate 600MB alloc
+    monkeypatch.setattr(train_module, "CLIPBackbone", lambda **_kwargs: clip_backbone)
     built_backbone, built_head = train_module.build_model_and_head(
         pretrained=None, device="cpu", trainable_visual_blocks=1, trainable_text_blocks=1
     )
-    assert isinstance(built_backbone, CLIPBackbone)
+    assert built_backbone is clip_backbone
     assert isinstance(built_head, IRRAStripeHead)
 
     # Verify CLI arg parser returns valid TrainConfig
